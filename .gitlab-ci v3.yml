@@ -1,0 +1,63 @@
+# Ejemplo con disparadores
+
+default:
+  image: node:20.17.0
+  cache:
+    key: "${CI_JOB_ID}"
+    paths:
+      - .npm/
+
+stages:
+  - install
+  - test
+  - build
+  - deploy
+
+install-packages:
+  stage: install
+  script:
+    - npm ci --cache .npm --prefer-offline
+
+test1:
+  stage: test
+  script:
+    - npx mocha test/test1.js
+  # Solo ejecutar este job si es la rama develop
+  only:
+    - develop
+
+
+test2:
+  stage: test
+  script:
+    - npx mocha --config $CONFIG_FILE test/test2.js
+  # Solo ejecutar este job si es evento de merge request
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+
+test3:
+  stage: test
+  script:
+    - npx mocha test/test3.js
+  # Este job debe ejecutarse de forma manual
+  when: manual
+
+test4:
+  stage: test
+  script:
+    - npx mocha test/test4.js
+
+test5:
+  stage: test
+  script:
+    - npx mocha --timeout 10000 test/test5.js
+    
+build:
+  stage: build
+  script:
+    - echo "Building .."
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploying .."

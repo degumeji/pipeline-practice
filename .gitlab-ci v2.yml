@@ -1,0 +1,52 @@
+default:
+  image: node:20.17.0
+  cache:
+    key: "${CI_JOB_ID}"
+    paths:
+      - .npm/
+
+stages:
+  - install
+  - test
+  - build
+  - deploy
+
+install-packages:
+  stage: install
+  script:
+    - npm ci --cache .npm --prefer-offline
+
+test1:
+  stage: test
+  script:
+    - npx mocha test/test1.js 
+
+test2:
+  stage: test
+  script:
+    - npx mocha --config test/test2.config.json test/test2.js
+
+test3:
+  stage: test
+  script:
+    - npx mocha test/test3.js
+
+test4:
+  stage: test
+  script:
+    - npx mocha test/test4.js
+
+test5:
+  stage: test
+  script:
+    - npx mocha --timeout 10000 test/test5.js
+    
+build:
+  stage: build
+  script:
+    - echo "Building .."
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploying .."
